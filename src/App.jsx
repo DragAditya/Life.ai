@@ -14,11 +14,15 @@ import Navbar from './components/Navbar'
 import LoadingSpinner from './components/LoadingSpinner'
 import { Toaster } from './components/ui/toaster'
 
+// ✅ Add this import if you use Radix Toast:
+import { ToastProvider } from '@radix-ui/react-toast'
+// ⚡ OR if you made your own provider in your `toaster` file:
+// import { ToastProvider } from './components/ui/toaster'
+
 function App() {
   const { user, loading, setUser, setLoading, clearAuth } = useAuthStore()
 
   useEffect(() => {
-    // Get initial session
     const getSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
@@ -38,7 +42,6 @@ function App() {
 
     getSession()
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.id)
@@ -59,41 +62,42 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="min-h-screen bg-background">
-        {user && <Navbar />}
-        <main className={user ? "pt-16" : ""}>
-          <Routes>
-            <Route 
-              path="/" 
-              element={user ? <ChatPage /> : <Navigate to="/login" />} 
-            />
-            <Route 
-              path="/timeline" 
-              element={user ? <TimelinePage /> : <Navigate to="/login" />} 
-            />
-            <Route 
-              path="/graph" 
-              element={user ? <GraphPage /> : <Navigate to="/login" />} 
-            />
-            <Route 
-              path="/settings" 
-              element={user ? <SettingsPage /> : <Navigate to="/login" />} 
-            />
-            <Route 
-              path="/login" 
-              element={!user ? <LoginPage /> : <Navigate to="/" />} 
-            />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </main>
-        <Toaster />
-      </div>
-    </Router>
+    <ToastProvider>
+      <Router>
+        <div className="min-h-screen bg-background">
+          {user && <Navbar />}
+          <main className={user ? "pt-16" : ""}>
+            <Routes>
+              <Route 
+                path="/" 
+                element={user ? <ChatPage /> : <Navigate to="/login" />} 
+              />
+              <Route 
+                path="/timeline" 
+                element={user ? <TimelinePage /> : <Navigate to="/login" />} 
+              />
+              <Route 
+                path="/graph" 
+                element={user ? <GraphPage /> : <Navigate to="/login" />} 
+              />
+              <Route 
+                path="/settings" 
+                element={user ? <SettingsPage /> : <Navigate to="/login" />} 
+              />
+              <Route 
+                path="/login" 
+                element={!user ? <LoginPage /> : <Navigate to="/" />} 
+              />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </main>
+          <Toaster />
+        </div>
+      </Router>
+    </ToastProvider>
   )
 }
 
-// Simple login page component
 function LoginPage() {
   const { signInWithGoogle, loading } = useAuthStore()
 
