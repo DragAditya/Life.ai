@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -28,7 +29,8 @@ export default defineConfig({
     open: true
   },
   preview: {
-    port: process.env.PORT || 4173,
-    host: true // 👈 bas itna hi, aur kuch nahi
+    port: process.env.PORT || 4173,  // Render will set $PORT
+    host: true,                      // Bind to 0.0.0.0
+    allowedHosts: ['life-ai-again.onrender.com'] // Allow your Render domain
   }
 })
